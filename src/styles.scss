@@ -1,0 +1,73 @@
+$border-radius: 0;
+$border-radius-lg: 0;
+$border-radius-sm: 0;
+
+a {
+  cursor: pointer;
+}
+.container {
+  max-width: 800px;
+}
+.navbar {
+  -webkit-box-shadow: 0px 6px 17px 0px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 6px 17px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 6px 17px 0px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+}
+.app-loader {
+  i {
+    font-size: 36px;
+    margin-top: 50px;
+    margin-bottom: 10px;
+  }
+}
+.userItem {
+  .editModeOptions {
+    margin-top: -21px;
+  }
+  :hover {
+    .editMode {
+      display: block;
+    }
+  }
+  &.isEditMode {
+    .editMode {
+      display: none;
+    }
+    .editModeOptions {
+      display: block;
+    }
+  }
+  .editMode {
+    display: none;
+  }
+}
+.card {
+  min-height: 70px;
+  margin-bottom: -1px;
+  padding-top: 20px;
+  img {
+    margin: -5px 20px 20px;
+  }
+}
+
+.adduser {
+  margin-bottom: 20px;
+  cursor: pointer;
+  :hover {
+    text-decoration: underline;
+  }
+  span {
+    border: 1px solid #000;
+    padding: 5px 10px;
+    position: absolute;
+    display: inline-block;
+    margin-left: 20px;
+  }
+  h5 {
+    margin-left: 70px;
+  }
+}
+
+@import '~bootstrap/scss/bootstrap.scss';
+@import '~font-awesome/css/font-awesome.css';
