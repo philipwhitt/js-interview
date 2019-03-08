@@ -47,14 +47,12 @@ class AddUser extends Component {
     e.preventDefault()
     e.stopPropagation()
 
-    var name = this._nameInput.value
-
     this._nameInput.disabled = true
 
     var fetchParams = {
       method: "POST",
       body: JSON.stringify({
-        name: name
+        name: this._nameInput.value
       })
     }
 
@@ -62,7 +60,7 @@ class AddUser extends Component {
       isLoading: true
     })
 
-    fetch("https://reqres.in/api/users?delay=3", fetchParams)
+    fetch("https://reqres.in/api/users?delay=2", fetchParams)
       .then(res => res.json())
       .then(
         (result) => {
@@ -70,6 +68,8 @@ class AddUser extends Component {
             userAdded: true,
             isLoading: false
           })
+
+          this.props.propgateChange()
         },
 
         (error) => {

@@ -25,6 +25,9 @@ a {
   .editModeOptions {
     margin-top: -21px;
   }
+  .editMode.isSaving {
+    display: block;
+  }
   :hover {
     .editMode {
       display: block;
