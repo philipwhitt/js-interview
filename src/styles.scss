@@ -22,11 +22,13 @@ a {
   }
 }
 .userItem {
+  .editMode,
   .editModeOptions {
     margin-top: -21px;
   }
   .editMode.isSaving {
     display: block;
+    margin-top: 0px;
   }
   :hover {
     .editMode {

@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import ErrorMessage from "./ErrorMessage.js"
 import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
 
 class UserListItem extends Component {
 
@@ -10,13 +12,32 @@ class UserListItem extends Component {
   constructor(props) {
     super(props)
 
-    this.toggleEditMode = this.toggleEditMode.bind(this)
-    this.handleSave = this.handleSave.bind(this)
-
     this.state = {
       isSaving: false,
-      isEditMode: false
+      isEditMode: false,
+      showConfirmModal: false,
+      isDeleting: false 
     }
+
+    this._svcUrl = "https://reqres.in/api/users/" + 
+      this.props.user.id +
+      "?delay=2"
+
+    this.toggleEditMode = this.toggleEditMode.bind(this)
+    this.handleSave = this.handleSave.bind(this)
+    this.closeConfirmModal = this.closeConfirmModal.bind(this)
+    this.openConfirmModal = this.openConfirmModal.bind(this)
+    this.deleteUser = this.deleteUser.bind(this)
+    this.handleError = this.handleError.bind(this)
+    this.handleNetworkSuccess = this.handleNetworkSuccess.bind(this)
+  }
+
+  closeConfirmModal() {
+    this.setState({ showConfirmModal: false })
+  }
+
+  openConfirmModal() {
+    this.setState({ showConfirmModal: true })
   }
 
   toggleEditMode() {
@@ -44,26 +65,38 @@ class UserListItem extends Component {
       isLoading: true
     })
 
-    var uri = "https://reqres.in/api/users/" + 
-      this.props.user.id +
-      "?delay=2"
+    axios.put(this._svcUrl, putParams)
+      .then(this.handleNetworkSuccess)
+      .catch(this.handleError)
+  }
 
-    axios.put(uri, putParams)
-      .then((response) => {
-          this.setState({
-            isSaving: false,
-            isEditMode: false
-          })
+  handleError(error) {
+    this.setState({
+      isSaving: false,
+      isEditMode: false,
+      error
+    })
+  }
 
-          this.props.propgateChange()
-        })
-      .catch((error) => {
-        this.setState({
-          isSaving: false,
-          isEditMode: false,
-          error
-        })
-      })
+  handleNetworkSuccess(response) {
+    this.setState({
+      isSaving: false,
+      isEditMode: false,
+      isDeleting: false,
+      showConfirmModal: false
+    })
+
+    this.props.propgateChange()
+  }
+
+  deleteUser() {
+    this.setState({
+      isDeleting: true
+    })
+
+    axios.delete(this._svcUrl)
+      .then(this.handleNetworkSuccess)
+      // .catc(this.handleError)
   }
 
   fullName() {
@@ -81,6 +114,11 @@ class UserListItem extends Component {
           onClick={this.toggleEditMode} 
           className="btn btn-link text-dark">
             <i className="fa fa-pencil"></i>
+        </button>
+        <button 
+          onClick={this.openConfirmModal} 
+          className="btn btn-link text-dark">
+            <i className="fa fa-trash"></i>
         </button>
       </div>
     )
@@ -124,6 +162,21 @@ class UserListItem extends Component {
       return (<ErrorMessage message={this.state.error.message} />);
     }
 
+    var modalFooter = () => (
+      <Modal.Footer>
+        <Button variant="link" onClick={this.closeConfirmModal}>Cancel</Button>
+        <Button variant="danger" type="submit" onClick={this.deleteUser}>Delete</Button>
+      </Modal.Footer>
+    )
+
+    if (this.state.isDeleting) {
+      modalFooter = () => (
+        <Modal.Footer>
+          <Button variant="secondary"><i className="fa fa-spinner fa-spin"></i> Deleting...</Button>
+        </Modal.Footer>
+      )
+    }
+
     return (
       <div className="col-sm-6 userItem" key={this.props.user.id} rel={this.props.user.id}>
         <div className="card">
@@ -137,6 +190,16 @@ class UserListItem extends Component {
             {editActivators()}
           </div>
         </div>
+
+        <Modal show={this.state.showConfirmModal} onHide={this.closeConfirmModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Delete</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p className="lead">Are you sure you want to delete {this.fullName()}?</p>
+          </Modal.Body>
+          {modalFooter()}
+        </Modal>
       </div>
     )
   }
