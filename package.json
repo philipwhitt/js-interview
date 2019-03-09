@@ -2,24 +2,24 @@
   "name": "js-interview",
   "private": true,
   "version": "0.0.1",
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "dependencies": {
+    "axios": "^0.18.0",
+    "bootstrap": "^4.3.1",
     "font-awesome": "^4.7.0",
     "node-sass": "^4.11.0",
-    "bootstrap": "^4.3.1",
     "react": "^16.3.1",
+    "react-bootstrap": "1.0.0-beta.5",
     "react-dom": "^16.3.1",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.1.2",
-    "react-bootstrap": "1.0.0-beta.5",
     "redux": "^3.5.2"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-enzyme": "^1.0.0-beta.1",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.10.0",
+    "jest-mock-axios": "^2.1.11",
     "react-scripts": "^2.0.2",
     "react-test-renderer": "^16.3.1"
   },
@@ -27,6 +27,13 @@
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "start": "react-scripts start",
-    "test": "react-scripts test --env=node"
-  }
+    "test": "react-scripts test --env=jsdom",
+    "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

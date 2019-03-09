@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { Component } from 'react'
 import ErrorMessage from "./ErrorMessage.js"
 import Form from 'react-bootstrap/Form'
@@ -49,38 +50,29 @@ class AddUser extends Component {
 
     this._nameInput.disabled = true
 
-    var fetchParams = {
-      method: "POST",
-      body: JSON.stringify({
-        name: this._nameInput.value
-      })
+    var postParams = {
+      name: this._nameInput.value
     }
 
     this.setState({
       isLoading: true
     })
 
-    fetch("https://reqres.in/api/users?delay=2", fetchParams)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            userAdded: true,
-            isLoading: false
-          })
+    axios.post("https://reqres.in/api/users?delay=2", postParams)
+      .then((response) => {
+        this.setState({
+          userAdded: true,
+          isLoading: false
+        })
 
-          this.props.propgateChange()
-        },
-
-        (error) => {
-          this.setState({
-            isLoading: false,
-            error
-          })
-        }
-    )
-
-    return false
+        this.props.propgateChange()
+      })
+      .catch((error) => {
+        this.setState({
+          isLoading: false,
+          error
+        })
+      })
   }
 
   render() {

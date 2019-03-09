@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { Component } from 'react'
 import Loading from "./Loading.js"
 import ErrorMessage from "./ErrorMessage.js"
@@ -10,6 +11,8 @@ class UserList extends Component {
     super(props)
 
     this.childComponentChanged = this.childComponentChanged.bind(this);
+    this.usersLoaded = this.usersLoaded.bind(this);
+    this.error = this.error.bind(this);
 
     this.state = {
       error: null,
@@ -24,25 +27,25 @@ class UserList extends Component {
   }
 
   loadData() {
-    fetch("https://reqres.in/api/users?per_page=20&delay=2")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            isBackgroundRefresh: false,
-            users: result.data
-          })
-        },
+    axios.get("https://reqres.in/api/users?per_page=20&delay=2")
+      .then(this.usersLoaded)
+      .catch(this.error)
+  }
 
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            isBackgroundRefresh: false,
-            error
-          })
-        }
-    )
+  usersLoaded(response) {
+    this.setState({
+      isLoaded: true,
+      isBackgroundRefresh: false,
+      users: response.data.data
+    })
+  }
+
+  error(error) {
+    this.setState({
+      isLoaded: true,
+      isBackgroundRefresh: false,
+      error
+    })
   }
 
   childComponentChanged() {
@@ -68,21 +71,23 @@ class UserList extends Component {
       <UserListItem key={user.id} user={user} propgateChange={this.childComponentChanged} />
     )
 
-    var header = () => (
+    var header = (
       <h1>User Accounts</h1>
     )
 
     if (this.state.isBackgroundRefresh) {
-      header = () => (
+      header = (
         <h1><i className="fa fa-spin fa-spinner"></i> User Accounts</h1>
       )
     }
 
     return (
       <div className="container">
-        {header()}
+        {header}
         <AddUser propgateChange={this.childComponentChanged} />
-        <div className="row">{listItems}</div>
+        <div className="row">
+          {listItems}
+        </div>
       </div>
     )
   }

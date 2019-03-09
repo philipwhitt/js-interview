@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios'
 import ErrorMessage from "./ErrorMessage.js"
 import Form from 'react-bootstrap/Form';
 
@@ -35,11 +36,8 @@ class UserListItem extends Component {
 
     this._input.disabled = true
 
-    var fetchParams = {
-      method: "PUT",
-      body: JSON.stringify({
-        name: this._input.value
-      })
+    var putParams = {
+      name: this._input.value
     }
 
     this.setState({
@@ -50,26 +48,22 @@ class UserListItem extends Component {
       this.props.user.id +
       "?delay=2"
 
-    fetch(uri, fetchParams)
-      .then(res => res.json())
-      .then(
-        (result) => {
+    axios.put(uri, putParams)
+      .then((response) => {
           this.setState({
             isSaving: false,
             isEditMode: false
           })
 
           this.props.propgateChange()
-        },
-
-        (error) => {
-          this.setState({
-            isSaving: false,
-            isEditMode: false,
-            error
-          })
-        }
-    )
+        })
+      .catch((error) => {
+        this.setState({
+          isSaving: false,
+          isEditMode: false,
+          error
+        })
+      })
   }
 
   fullName() {
@@ -83,7 +77,11 @@ class UserListItem extends Component {
 
     var editActivators = () => (
       <div className="col-sm-2 editMode">
-        <a onClick={this.toggleEditMode} className="btn btn-link"><i className="fa fa-pencil"></i></a>
+        <button 
+          onClick={this.toggleEditMode} 
+          className="btn btn-link text-dark">
+            <i className="fa fa-pencil"></i>
+        </button>
       </div>
     )
 
@@ -102,8 +100,12 @@ class UserListItem extends Component {
 
       editActivators = () => (
         <div className="col-sm-2 editModeOptions">
-          <a onClick={this.handleSave} className="btn btn-link text-success"><i className="fa fa-check"></i></a>
-          <a onClick={this.toggleEditMode} className="btn btn-link text-danger"><i className="fa fa-close"></i></a>
+          <button onClick={this.handleSave} className="btn btn-link text-success">
+            <i className="fa fa-check"></i>
+          </button>
+          <button onClick={this.toggleEditMode} className="btn btn-link text-danger">
+            <i className="fa fa-close"></i>
+          </button>
         </div>
       )
     }
@@ -111,7 +113,9 @@ class UserListItem extends Component {
     if (this.state.isSaving) {
       editActivators = () => (
         <div className="col-sm-2 editMode isSaving">
-          <a className="btn btn-link"><i className="fa fa-spinner fa-spin"></i></a>
+          <button className="btn btn-link text-dark">
+            <i className="fa fa-spinner fa-spin"></i>
+          </button>
         </div>
       )
     }
