@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import ErrorMessage from "./ErrorMessage.js"
 import UserDeleteModal from "./UserDeleteModal.js"
+import UserActivators from "./UserActivators.js"
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button'
 
 class UserListItem extends Component {
 
@@ -118,21 +118,6 @@ class UserListItem extends Component {
       <h5 className="mt-0">{this.fullName()}</h5>
     )
 
-    var editActivators = () => (
-      <div className="col-sm-2 editMode">
-        <button 
-          onClick={this.toggleEditMode} 
-          className="btn btn-link text-dark">
-            <i className="fa fa-pencil"></i>
-        </button>
-        <button 
-          onClick={this.openConfirmModal} 
-          className="btn btn-link text-dark">
-            <i className="fa fa-trash"></i>
-        </button>
-      </div>
-    )
-
     if (this.state.isEditMode) {
       name = () => (
         <Form.Group controlId="formName">
@@ -144,27 +129,6 @@ class UserListItem extends Component {
             required 
           />
         </Form.Group>
-      )
-
-      editActivators = () => (
-        <div className="col-sm-2 editModeOptions">
-          <button onClick={this.handleSave} className="btn btn-link text-success">
-            <i className="fa fa-check"></i>
-          </button>
-          <button onClick={this.toggleEditMode} className="btn btn-link text-danger">
-            <i className="fa fa-close"></i>
-          </button>
-        </div>
-      )
-    }
-
-    if (this.state.isSaving) {
-      editActivators = () => (
-        <div className="col-sm-2 editMode isSaving">
-          <button className="btn btn-link text-dark">
-            <i className="fa fa-spinner fa-spin"></i>
-          </button>
-        </div>
       )
     }
 
@@ -186,7 +150,12 @@ class UserListItem extends Component {
                 {name()}
               </div>
             </div>
-            {editActivators()}
+            <UserActivators 
+              toggleEditMode={this.toggleEditMode}
+              openConfirmModal={this.openConfirmModal}
+              handleSave={this.handleSave}
+              isSaving={this.state.isSaving}
+              isEditMode={this.state.isEditMode}/>
           </div>
         </div>
 
