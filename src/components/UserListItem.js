@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import ErrorMessage from "./ErrorMessage.js"
+import UserDeleteModal from "./UserDeleteModal.js"
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
 
 class UserListItem extends Component {
 
@@ -16,7 +16,8 @@ class UserListItem extends Component {
       isSaving: false,
       isEditMode: false,
       showConfirmModal: false,
-      isDeleting: false 
+      isDeleting: false,
+      deleted: false
     }
 
     this._svcUrl = "https://reqres.in/api/users/" + 
@@ -29,7 +30,7 @@ class UserListItem extends Component {
     this.openConfirmModal = this.openConfirmModal.bind(this)
     this.deleteUser = this.deleteUser.bind(this)
     this.handleError = this.handleError.bind(this)
-    this.handleNetworkSuccess = this.handleNetworkSuccess.bind(this)
+    this.handlePutSuccess = this.handlePutSuccess.bind(this)
   }
 
   closeConfirmModal() {
@@ -57,6 +58,11 @@ class UserListItem extends Component {
 
     this._input.disabled = true
 
+    var name = this._input.value.split(' ');
+
+    this.props.user.first_name = name[0]
+    this.props.user.last_name = name[1]
+
     var putParams = {
       name: this._input.value
     }
@@ -66,7 +72,7 @@ class UserListItem extends Component {
     })
 
     axios.put(this._svcUrl, putParams)
-      .then(this.handleNetworkSuccess)
+      .then(this.handlePutSuccess)
       .catch(this.handleError)
   }
 
@@ -78,7 +84,7 @@ class UserListItem extends Component {
     })
   }
 
-  handleNetworkSuccess(response) {
+  handlePutSuccess(response) {
     this.setState({
       isSaving: false,
       isEditMode: false,
@@ -86,7 +92,7 @@ class UserListItem extends Component {
       showConfirmModal: false
     })
 
-    this.props.propgateChange()
+    this.props.propgateChange(response.data)
   }
 
   deleteUser() {
@@ -95,8 +101,12 @@ class UserListItem extends Component {
     })
 
     axios.delete(this._svcUrl)
-      .then(this.handleNetworkSuccess)
-      // .catc(this.handleError)
+      .then((response) => {
+        this.setState({
+          deleted: true
+        })
+      })
+      .catch(this.handleError)
   }
 
   fullName() {
@@ -162,19 +172,8 @@ class UserListItem extends Component {
       return (<ErrorMessage message={this.state.error.message} />);
     }
 
-    var modalFooter = () => (
-      <Modal.Footer>
-        <Button variant="link" onClick={this.closeConfirmModal}>Cancel</Button>
-        <Button variant="danger" type="submit" onClick={this.deleteUser}>Delete</Button>
-      </Modal.Footer>
-    )
-
-    if (this.state.isDeleting) {
-      modalFooter = () => (
-        <Modal.Footer>
-          <Button variant="secondary"><i className="fa fa-spinner fa-spin"></i> Deleting...</Button>
-        </Modal.Footer>
-      )
+    if (this.state.deleted) {
+      return <div></div>
     }
 
     return (
@@ -191,15 +190,12 @@ class UserListItem extends Component {
           </div>
         </div>
 
-        <Modal show={this.state.showConfirmModal} onHide={this.closeConfirmModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Delete</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p className="lead">Are you sure you want to delete {this.fullName()}?</p>
-          </Modal.Body>
-          {modalFooter()}
-        </Modal>
+        <UserDeleteModal 
+          fullName={this.fullName()}
+          isDeleting={this.state.isDeleting}
+          showConfirmModal={this.state.showConfirmModal}
+          closeConfirmModal={this.closeConfirmModal}
+          deleteUser={this.deleteUser}/>
       </div>
     )
   }

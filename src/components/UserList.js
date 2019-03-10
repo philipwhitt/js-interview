@@ -10,9 +10,11 @@ class UserList extends Component {
   constructor(props) {
     super(props)
 
-    this.childComponentChanged = this.childComponentChanged.bind(this);
+    this.refreshServerData = this.refreshServerData.bind(this);
     this.usersLoaded = this.usersLoaded.bind(this);
     this.error = this.error.bind(this);
+    this.userAdded = this.userAdded.bind(this);
+    this.userChanged = this.userChanged.bind(this);
 
     this.state = {
       error: null,
@@ -48,12 +50,35 @@ class UserList extends Component {
     })
   }
 
-  childComponentChanged() {
-    this.setState({
-      isBackgroundRefresh: true
-    })
+  userChanged(data) {
+    
+  }
 
-    this.loadData();
+  userAdded(data) {
+    var nameParts = data.name.split(' ')
+
+    // reqres.in API is inconsistent af
+    var newUser = {
+      id : data.id,
+      avatar: 'https://via.placeholder.com/40/DDDDDD.png?text=?',
+      first_name : nameParts[0],
+      last_name : nameParts[1]
+    }
+
+    this.state.users.unshift(newUser);
+
+    this.setState({});
+  }
+
+  // app with real api would forgo the state.user manipulation in favor of 
+  // refreshing the data on screen using data from server
+  refreshServerData(data) {
+    // 'Skipping background refresh in favor of client side state save'
+    // this.setState({
+    //   isBackgroundRefresh: true
+    // })
+
+    // this.loadData();
   }
 
   render() {
@@ -68,7 +93,7 @@ class UserList extends Component {
     }
 
     const listItems = users.map((user) =>
-      <UserListItem key={user.id} user={user} propgateChange={this.childComponentChanged} />
+      <UserListItem key={user.id} user={user} propgateChange={this.userChanged} />
     )
 
     var header = (
@@ -84,7 +109,7 @@ class UserList extends Component {
     return (
       <div className="container">
         {header}
-        <AddUser propgateChange={this.childComponentChanged} />
+        <AddUser propgateChange={this.userAdded} />
         <div className="row">
           {listItems}
         </div>

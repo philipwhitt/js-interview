@@ -65,7 +65,7 @@ class AddUser extends Component {
           isLoading: false
         })
 
-        this.props.propgateChange()
+        this.props.propgateChange(response.data)
       })
       .catch((error) => {
         this.setState({
