@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import Enzyme, { shallow } from 'enzyme';
 import mockAxios from 'jest-mock-axios';
 import Adapter from 'enzyme-adapter-react-16'
-import UserList from '../components/UserList'
-import UserListItem from '../components/UserListItem'
+import App from '../components/App'
+import UserItem from '../components/UserItem'
 import ErrorMessage from '../components/ErrorMessage'
 import Loading from '../components/Loading'
 
@@ -15,13 +15,13 @@ afterEach(() => {
 });
 
 it('should display loading', () => {
-  let wrapper = shallow(<UserList />)
+  let wrapper = shallow(<App />)
 
   expect(wrapper.find(Loading)).to.have.lengthOf(1)
 })
 
 it('should display a list of user items', () => {
-  let wrapper = shallow(<UserList />)
+  let wrapper = shallow(<App />)
 
   mockAxios.mockResponse({
     data: {
@@ -42,11 +42,11 @@ it('should display a list of user items', () => {
     }
   })
 
-  expect(wrapper.find(UserListItem)).to.have.lengthOf(2)
+  expect(wrapper.find(UserItem)).to.have.lengthOf(2)
 })
 
 it('should display an error if svc fails', () => {
-  let wrapper = shallow(<UserList />)
+  let wrapper = shallow(<App />)
 
   mockAxios.mockError({
     message: "Error testing"

@@ -2,17 +2,18 @@ import axios from 'axios'
 import React, { Component } from 'react'
 import Loading from "./Loading.js"
 import ErrorMessage from "./ErrorMessage.js"
-import UserListItem from "./UserListItem.js"
+import UserItem from "./UserItem.js"
 import AddUser from "./AddUser.js"
+import Header from "./Header.js"
 
-class UserList extends Component {
+class App extends Component {
 
   constructor(props) {
     super(props)
 
     this.refreshServerData = this.refreshServerData.bind(this);
     this.usersLoaded = this.usersLoaded.bind(this);
-    this.error = this.error.bind(this);
+    this.handleError = this.handleError.bind(this);
     this.userAdded = this.userAdded.bind(this);
     this.userDeleted = this.userDeleted.bind(this);
 
@@ -31,7 +32,7 @@ class UserList extends Component {
   loadData() {
     axios.get("https://reqres.in/api/users?per_page=20&delay=2")
       .then(this.usersLoaded)
-      .catch(this.error)
+      .catch(this.handleError)
   }
 
   usersLoaded(response) {
@@ -42,7 +43,7 @@ class UserList extends Component {
     })
   }
 
-  error(error) {
+  handleError(error) {
     this.setState({
       isLoaded: true,
       isBackgroundRefresh: false,
@@ -87,40 +88,30 @@ class UserList extends Component {
   }
 
   render() {
-    const { error, isLoaded, users } = this.state;
-
-    if (error) {
-      return (<ErrorMessage message={error.message} />);
-    } 
-
-    if (!isLoaded) {
-      return (<Loading />);
+    if (this.state.error) {
+      return (<ErrorMessage message={this.state.error.message} />);
     }
 
-    const listItems = users.map((user) =>
-      <UserListItem key={user.id} user={user} propgateChange={this.userDeleted} />
-    )
-
-    var header = (
-      <h1>User Accounts</h1>
-    )
-
-    if (this.state.isBackgroundRefresh) {
-      header = (
-        <h1><i className="fa fa-spin fa-spinner"></i> User Accounts</h1>
+    var body = (<Loading />)
+    
+    if (this.state.isLoaded) {
+      body = this.state.users.map((user) =>
+        <UserItem key={user.id} user={user} propgateChange={this.userDeleted} />
       )
     }
 
     return (
-      <div className="container">
-        {header}
-        <AddUser propgateChange={this.userAdded} />
-        <div className="row">
-          {listItems}
+      <>
+        <Header isLoading={this.state.isBackgroundRefresh} />
+        <div className="container">
+          <AddUser propgateChange={this.userAdded} />
+          <div className="row">
+            {body}
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 }
 
-export default UserList
+export default App

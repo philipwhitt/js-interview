@@ -5,7 +5,7 @@ import UserDeleteModal from "./UserDeleteModal.js"
 import UserActivators from "./UserActivators.js"
 import Form from 'react-bootstrap/Form';
 
-class UserListItem extends Component {
+class UserItem extends Component {
 
   _input: ?HTMLInputElement;
 
@@ -163,4 +163,4 @@ class UserListItem extends Component {
   }
 }
 
-export default UserListItem
+export default UserItem
