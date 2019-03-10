@@ -14,7 +14,7 @@ class UserList extends Component {
     this.usersLoaded = this.usersLoaded.bind(this);
     this.error = this.error.bind(this);
     this.userAdded = this.userAdded.bind(this);
-    this.userChanged = this.userChanged.bind(this);
+    this.userDeleted = this.userDeleted.bind(this);
 
     this.state = {
       error: null,
@@ -50,8 +50,13 @@ class UserList extends Component {
     })
   }
 
-  userChanged(data) {
-    
+  userDeleted(deletedUser) {
+    for (var i = this.state.users.length - 1; i >= 0; i--) {
+      if (this.state.users[i].id === deletedUser.id) {
+        this.state.users.splice(i, 1)
+      }
+    }
+    this.setState({})
   }
 
   userAdded(data) {
@@ -93,7 +98,7 @@ class UserList extends Component {
     }
 
     const listItems = users.map((user) =>
-      <UserListItem key={user.id} user={user} propgateChange={this.userChanged} />
+      <UserListItem key={user.id} user={user} propgateChange={this.userDeleted} />
     )
 
     var header = (

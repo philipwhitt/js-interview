@@ -16,8 +16,7 @@ class UserListItem extends Component {
       isSaving: false,
       isEditMode: false,
       showConfirmModal: false,
-      isDeleting: false,
-      deleted: false
+      isDeleting: false
     }
 
     this._svcUrl = "https://reqres.in/api/users/" + 
@@ -102,9 +101,7 @@ class UserListItem extends Component {
 
     axios.delete(this._svcUrl)
       .then((response) => {
-        this.setState({
-          deleted: true
-        })
+        this.props.propgateChange(this.props.user)
       })
       .catch(this.handleError)
   }
@@ -134,10 +131,6 @@ class UserListItem extends Component {
 
     if (this.state.error) {
       return (<ErrorMessage message={this.state.error.message} />);
-    }
-
-    if (this.state.deleted) {
-      return <div></div>
     }
 
     return (
